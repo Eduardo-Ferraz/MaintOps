@@ -1,4 +1,5 @@
 using Industriall.MaintOps.Api.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace Industriall.MaintOps.Api.Features.WorkOrders.GetWorkOrders;
 
