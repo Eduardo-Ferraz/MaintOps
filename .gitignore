@@ -1,0 +1,17 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+TestResults/
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Secrets
+appsettings.Production.json
+appsettings.*.local.json
+
+# Docker
+docker-compose.override.yml

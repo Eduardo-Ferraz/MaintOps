@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: maintops-api
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: >
+        Host=postgres;Port=5432;Database=maintops;Username=postgres;Password=postgres
+      Jwt__SecretKey: "CHANGE-ME-use-a-very-long-secret-at-least-32-characters-long!"
+      Jwt__Issuer: "Industriall.MaintOps.Api"
+      Jwt__Audience: "Industriall.MaintOps.Client"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - maintops-net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: maintops-postgres
+    environment:
+      POSTGRES_DB:       maintops
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d maintops"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - maintops-net
+
+volumes:
+  postgres-data:
+    driver: local
+
+networks:
+  maintops-net:
+    driver: bridge
